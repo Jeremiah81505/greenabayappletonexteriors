@@ -1,0 +1,49 @@
+---
+description: This should be used every time when generating a pull request
+globs: 
+alwaysApply: false
+---
+---
+description: Helpful for producing pull requests related to this repository.
+globs:
+alwaysApply: false
+---
+## Purpose
+
+This is our pull request template for the godaddy-launch repository. It provides a consistent structure for describing code changes, their impact, and testing approach.
+
+## Usage Instructions
+
+The following is the pull request template that should be filled out when a user is requesting you to provide a pull request description.
+
+### Description
+
+<!-- Please describe what you have changed or added -->
+
+### Ticket
+
+<!-- Please provide the Jira Ticket Number if applicable -->
+<!-- Usually this is the exact same as the branch name e.g. AIWD-504 -->
+
+### How to test?
+
+<!-- Please describe how these changes have been tested and should be tested by the reviewers -->
+
+### Screenshots
+
+<!-- if applicable -->
+
+### Checklist:
+
+-   [ ] My code is tested
+-   [ ] I've added or updated any necessary tests (unit tests and e2e/integration tests) <!-- if applicable -->
+-   [ ] I've added or updated any relevant documentation <!-- if applicable -->
+
+---
+
+For Release Notes:
+(Add bullets that begin with one of "Added", "Removed", "Fixed", or "Changed")
+
+```markdown
+-   Added for example
+```

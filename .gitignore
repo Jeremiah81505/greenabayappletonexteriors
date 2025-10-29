@@ -1,0 +1,62 @@
+# WordPress Core Files
+/wp-admin/
+/wp-includes/
+/wp-content/uploads/
+wp-config.php
+
+# Database and Sensitive Files
+*.sql
+*.sql.gz
+*.log
+
+# Temporary and Cache Files
+.DS_Store
+.htaccess
+wp-content/cache/
+wp-content/backup-db/
+
+# Plugin and Theme Development
+wp-content/themes/*/node_modules/
+wp-content/plugins/*/node_modules/
+*.sass-cache
+
+# Security Files
+wp-config-sample.php
+readme.html
+license.txt
+
+# Hosting Specific
+wp-admin.zip
+gd-config.php
+gd-preload-cli.php
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Generated Files
+Thumbs.db
+.DS_Store
+
+# WordPress Specific
+wp-content/upgrade/
+wp-content/backup-db/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+
+# Image and Media Files (optional - remove if you want to track these)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pdf
+*.zip
+
+# Only track these important files
+!wp-content/themes/
+!wp-content/plugins/
+!wp-content/mu-plugins/
+wp-content/themes/*/node_modules/
+wp-content/plugins/*/node_modules/

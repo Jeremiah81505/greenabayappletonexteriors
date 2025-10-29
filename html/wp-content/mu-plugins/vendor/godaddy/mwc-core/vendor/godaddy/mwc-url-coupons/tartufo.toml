@@ -1,0 +1,41 @@
+[tool.tartufo]
+repo-path = "."
+default-regexes = true
+json = false
+regex = true
+entropy = true
+exclude-path-patterns = [
+  {path-pattern="/archive", reason="legacy archive folder"},
+  # Lock Files are not always in the root
+  {path-pattern=".*composer.lock", reason="Composer lock file"},
+  {path-pattern=".*package-lock.json", reason="NPM lock file"},
+  {path-pattern=".*yarn.lock", reason='Yarn lock file'},
+
+  # Images
+  {path-pattern='.*\.css$', reason="CSS inline image"},
+  {path-pattern='.*\.scss$', reason="SCSS inline image"},
+  {path-pattern='.*\.ico$', reason="ICO image"},
+  {path-pattern='.*\.jpg$', reason="JPG image"},
+  {path-pattern='.*\.png$', reason="PNG image"},
+  {path-pattern='.*\.svg$', reason="SVG image"},
+
+  # Config files
+  {path-pattern=".editorconfig", reason="Editorconfig"},
+  {path-pattern=".pre-commit-config.yaml", reason="pre-commit configuration"},
+  {path-pattern="tartufo.toml", reason="Tartufo configuration"},
+  {path-pattern="phpstan-baseline.neon", reason="PHPStan baseline"},
+
+  # i18n
+  {path-pattern="i18n/", reason="Localization files"},
+
+  # Tests
+  {path-pattern="docker-compose.yml", reason="Lumiere configuration file"},
+  {path-pattern=".env.lumiere.dist", reason="Test suite refernece"},
+  {path-pattern="tests/_data/", reason="Test assets"},
+  {path-pattern="tests/_output/", reason="Test assets"},
+  {path-pattern="tests/_support/", reason="Test assets"},
+]
+exclude-signatures = [
+  {signature="2215a2c17ce261e7a2730d69a543abcd5019405db8667adbe196fdaef897ea06", reason="Legacy excluded pattern"},
+  {signature="31245f595aaf49e59f759387a9b09486264e014a44637b4ac45e98a0cd392a29", reason="WooCommerce plugin identifier"},
+]

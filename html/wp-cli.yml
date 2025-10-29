@@ -1,0 +1,4 @@
+skip-plugins: true
+skip-themes: true
+require:
+  - gd-preload-cli.php
