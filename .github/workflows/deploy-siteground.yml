@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-  SITEGROUND_HOST: ssh.greenbayappletonexteriorsolutions.com
+      SITEGROUND_HOST: ssh.greenbayappletonexteriorsolutions.com
       SITEGROUND_PORT: "18765"
       SITEGROUND_USER: u3100-pdmwtlq9gnso
       SITEGROUND_REPO_PATH: /home/customer/www/greenbayappletonexteriorsolutions.com/public_html/
@@ -41,6 +41,22 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+      - name: Prepare SiteGround repository
+        run: |
+          set -euo pipefail
+          REMOTE_PATH="${SITEGROUND_REPO_PATH%/}"
+          ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" "\
+            set -e\n\
+            cd \"$REMOTE_PATH\"\n\
+            if [ -f .git/shallow ]; then\n\
+              echo 'Remote repository is shallow; fetching full history...';\n\
+              git fetch --unshallow || git fetch --unshallow origin || true;\n\
+            else\n\
+              echo 'Remote repository already has full history.';\n\
+            fi\n\
+            git config receive.shallowUpdate true || true\n\
+          "
 
       - name: Validate SSH connectivity
         run: |
