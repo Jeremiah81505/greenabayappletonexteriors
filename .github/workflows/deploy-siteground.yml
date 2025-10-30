@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SITEGROUND_HOST: giowm1239.siteground.biz
+  SITEGROUND_HOST: ssh.greenbayappletonexteriorsolutions.com
       SITEGROUND_PORT: "18765"
       SITEGROUND_USER: u3100-pdmwtlq9gnso
       SITEGROUND_REPO_PATH: /home/customer/www/greenbayappletonexteriorsolutions.com/public_html/
