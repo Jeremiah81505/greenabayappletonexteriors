@@ -22,14 +22,14 @@ jobs:
 
       - name: Install SSH key
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SITEGROUND_DEPLOY_KEY }}
+          SG_SSH_PRIVATE_KEY_B64: ${{ secrets.SG_SSH_PRIVATE_KEY_B64 }}
         run: |
           mkdir -p ~/.ssh
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "::error::SITEGROUND_DEPLOY_KEY secret is not configured."
+          if [ -z "$SG_SSH_PRIVATE_KEY_B64" ]; then
+            echo "::error::SG_SSH_PRIVATE_KEY_B64 secret is not configured."
             exit 1
           fi
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/siteground_key
+          echo "$SG_SSH_PRIVATE_KEY_B64" | base64 -d > ~/.ssh/siteground_key
           chmod 600 ~/.ssh/siteground_key
           ssh-keyscan -p $SITEGROUND_PORT $SITEGROUND_HOST >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
@@ -76,10 +76,14 @@ EOSSH
 
       - name: Push to SiteGround remote
         env:
-          REMOTE_URL: ssh://${{ env.SITEGROUND_USER }}@${{ env.SITEGROUND_HOST }}:${{ env.SITEGROUND_PORT }}${{ env.SITEGROUND_REPO_PATH }}
+          REMOTE_URL: ${{ secrets.SG_REMOTE }}
         run: |
           set -euo pipefail
           export GIT_SSH_COMMAND="ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p ${SITEGROUND_PORT}"
+          if [ -z "$REMOTE_URL" ]; then
+            echo "::error::SG_REMOTE secret is not configured."
+            exit 1
+          fi
           echo "Using remote: $REMOTE_URL"
           git remote remove siteground >/dev/null 2>&1 || true
           git remote add siteground "$REMOTE_URL"
