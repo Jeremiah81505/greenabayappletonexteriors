@@ -58,5 +58,5 @@ jobs:
           git remote remove siteground >/dev/null 2>&1 || true
           git remote add siteground "$REMOTE_URL"
           git remote -v
-          git fetch siteground "$SITEGROUND_BRANCH" || true
+          git fetch --unshallow siteground "$SITEGROUND_BRANCH" || true
           git push --force --verbose siteground HEAD:"$SITEGROUND_BRANCH"
