@@ -20,10 +20,16 @@ jobs:
           ssh-keyscan -p 18765 ssh.greenbayappletonexteriorsolutions.com >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+      - name: Debug SSH to SiteGround
+        run: |
+          ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 -p 18765 u3100-pdmwtlq9gnso@ssh.greenbayappletonexteriorsolutions.com 'echo OK && whoami && pwd && ls -la ~ && ls -la /home/customer/www/greenbayappletonexteriorsolutions.com/.git || echo "NO_GIT_DIR"'
+
       - name: Push main to SiteGround
         env:
           SG_REMOTE: ${{ secrets.SG_REMOTE }}
         run: |
           git remote remove siteground 2>/dev/null || true
           git remote add siteground "$SG_REMOTE"
-          GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519' git push siteground main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519' git push siteground main -v
