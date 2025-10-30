@@ -25,9 +25,14 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SITEGROUND_DEPLOY_KEY }}
         run: |
           mkdir -p ~/.ssh
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "::error::SITEGROUND_DEPLOY_KEY secret is not configured."
+            exit 1
+          fi
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/siteground_key
           chmod 600 ~/.ssh/siteground_key
           ssh-keyscan -p $SITEGROUND_PORT $SITEGROUND_HOST >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
           cat <<EOF >> ~/.ssh/config
           Host siteground $SITEGROUND_HOST
             HostName $SITEGROUND_HOST
@@ -46,17 +51,22 @@ jobs:
         run: |
           set -euo pipefail
           REMOTE_PATH="${SITEGROUND_REPO_PATH%/}"
-          ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" "\
-            set -e\n\
-            cd \"$REMOTE_PATH\"\n\
-            if [ -f .git/shallow ]; then\n\
-              echo 'Remote repository is shallow; fetching full history...';\n\
-              git fetch --unshallow || git fetch --unshallow origin || true;\n\
-            else\n\
-              echo 'Remote repository already has full history.';\n\
-            fi\n\
-            git config receive.shallowUpdate true || true\n\
-          "
+          if ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" "REMOTE_PATH=\"$REMOTE_PATH\" bash -s" <<'EOSSH'
+          set -e
+          cd "$REMOTE_PATH"
+          if [ -f .git/shallow ]; then
+            echo 'Remote repository is shallow; fetching full history...'
+            git fetch --unshallow || git fetch --unshallow origin || true
+          else
+            echo 'Remote repository already has full history.'
+          fi
+          git config receive.shallowUpdate true || true
+EOSSH
+          then
+            echo "Remote repository prepared."
+          else
+            echo "::warning::Unable to prepare remote repository automatically (SSH access may be restricted). Continuing with deploy."
+          fi
 
       - name: Validate SSH connectivity
         run: |
