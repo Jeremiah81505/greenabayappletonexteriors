@@ -43,9 +43,9 @@ jobs:
           git config user.email "actions@github.com"
 
       - name: Push to SiteGround remote
-        env:
-          REMOTE_URL: ssh://${SITEGROUND_USER}@${SITEGROUND_HOST}:${SITEGROUND_PORT}${SITEGROUND_REPO_PATH}
         run: |
+          REMOTE_URL="ssh://${SITEGROUND_USER}@${SITEGROUND_HOST}:${SITEGROUND_PORT}${SITEGROUND_REPO_PATH}"
           git remote remove siteground || true
           git remote add siteground "$REMOTE_URL"
-          git push siteground HEAD:$SITEGROUND_BRANCH
+          git fetch siteground $SITEGROUND_BRANCH || true
+          git push --force siteground HEAD:$SITEGROUND_BRANCH
