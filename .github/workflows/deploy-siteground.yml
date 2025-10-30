@@ -29,7 +29,7 @@ jobs:
           chmod 600 ~/.ssh/siteground_key
           ssh-keyscan -p $SITEGROUND_PORT $SITEGROUND_HOST >> ~/.ssh/known_hosts
           cat <<EOF >> ~/.ssh/config
-          Host siteground
+          Host siteground $SITEGROUND_HOST
             HostName $SITEGROUND_HOST
             User $SITEGROUND_USER
             Port $SITEGROUND_PORT
