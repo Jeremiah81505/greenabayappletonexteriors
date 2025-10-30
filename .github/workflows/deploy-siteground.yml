@@ -42,13 +42,21 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
+      - name: Validate SSH connectivity
+        run: |
+          set -euo pipefail
+          ls -al ~/.ssh
+          ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" 'echo "SSH connection established"'
+
       - name: Push to SiteGround remote
         env:
           REMOTE_URL: ssh://${{ env.SITEGROUND_USER }}@${{ env.SITEGROUND_HOST }}:${{ env.SITEGROUND_PORT }}${{ env.SITEGROUND_REPO_PATH }}
         run: |
+          set -euo pipefail
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p ${SITEGROUND_PORT}"
           echo "Using remote: $REMOTE_URL"
           git remote remove siteground >/dev/null 2>&1 || true
           git remote add siteground "$REMOTE_URL"
           git remote -v
           git fetch siteground "$SITEGROUND_BRANCH" || true
-          git push --force siteground HEAD:"$SITEGROUND_BRANCH"
+          git push --force --verbose siteground HEAD:"$SITEGROUND_BRANCH"
