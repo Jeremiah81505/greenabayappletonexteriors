@@ -7,22 +7,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout full history
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup SSH (key + known_hosts)
+      - name: Setup SSH (decode key + known_hosts)
+        env:
+          SG_SSH_PRIVATE_KEY_B64: ${{ secrets.SG_SSH_PRIVATE_KEY_B64 }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SG_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "$SG_SSH_PRIVATE_KEY_B64" | base64 -d > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p 18765 ssh.greenbayappletonexteriorsolutions.com >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-
-      - name: Debug SSH to SiteGround
-        run: |
-          ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 -p 18765 u3100-pdmwtlq9gnso@ssh.greenbayappletonexteriorsolutions.com 'echo OK && whoami && pwd && ls -la ~ && ls -la /home/customer/www/greenbayappletonexteriorsolutions.com/.git || echo "NO_GIT_DIR"'
 
       - name: Push main to SiteGround
         env:
