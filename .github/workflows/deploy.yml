@@ -58,14 +58,24 @@ jobs:
           fi
 
           export MYSQL_PWD="$DB_PASSWORD"
+          echo "Disabling foreign key checks ..."
+          mysql -u "$DB_USER" -D "$DB_NAME" -e 'SET FOREIGN_KEY_CHECKS = 0;'
 
-          echo "Dropping existing tables in $DB_NAME ..."
-          mysql -u "$DB_USER" -D "$DB_NAME" -Nse 'SHOW TABLES' | while read -r table; do
-            mysql -u "$DB_USER" -D "$DB_NAME" -e "DROP TABLE IF EXISTS \\`$table\\`"
-          done
+          mapfile -t tables < <(mysql -u "$DB_USER" -D "$DB_NAME" -Nse 'SHOW TABLES')
+          if [ "${#tables[@]}" -gt 0 ]; then
+            echo "Dropping existing tables in $DB_NAME ..."
+            for table in "${tables[@]}"; do
+              mysql -u "$DB_USER" -D "$DB_NAME" -e "DROP TABLE IF EXISTS \`$table\`;" || true
+            done
+          else
+            echo "No tables found in $DB_NAME."
+          fi
 
           echo "Importing SQL dump ..."
           mysql -u "$DB_USER" "$DB_NAME" < "$DB_SQL_PATH"
+
+          echo "Re-enabling foreign key checks ..."
+          mysql -u "$DB_USER" -D "$DB_NAME" -e 'SET FOREIGN_KEY_CHECKS = 1;'
 
           echo "Updating siteurl/home options ..."
           mysql -u "$DB_USER" "$DB_NAME" -e "UPDATE wp_q2x61kxgzj_options SET option_value='https://greenbayappletonexteriorsolutions.com' WHERE option_name IN ('siteurl','home');"
@@ -76,5 +86,34 @@ jobs:
           mysql -u "$DB_USER" "$DB_NAME" -e "UPDATE wp_q2x61kxgzj_postmeta SET meta_value = REPLACE(meta_value, 'http://localhost/exterior-solutions', 'https://greenbayappletonexteriorsolutions.com');"
 
           echo "Clearing caches ..."
-          php -r "define('WP_USE_THEMES', false); require __DIR__ . '/html/wp-load.php'; if (function_exists('wp_cache_flush')) { wp_cache_flush(); } if (function_exists('flush_rewrite_rules')) { flush_rewrite_rules(true); }"
+          php <<'PHP'
+<?php
+$roots = [
+    __DIR__ . '/html/wp-load.php',
+    __DIR__ . '/wp-load.php',
+];
+
+$load = null;
+foreach ($roots as $candidate) {
+    if (file_exists($candidate)) {
+        $load = $candidate;
+        break;
+    }
+}
+
+if (!$load) {
+    fwrite(STDERR, "wp-load.php not found in expected locations.\n");
+    exit(1);
+}
+
+require $load;
+
+if (function_exists('wp_cache_flush')) {
+    wp_cache_flush();
+}
+
+if (function_exists('flush_rewrite_rules')) {
+    flush_rewrite_rules(true);
+}
+PHP
           EOF
