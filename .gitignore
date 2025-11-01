@@ -8,6 +8,7 @@ wp-config.php
 *.sql
 *.sql.gz
 *.log
+!fkqc46017421287.sql
 
 # Temporary and Cache Files
 .DS_Store
