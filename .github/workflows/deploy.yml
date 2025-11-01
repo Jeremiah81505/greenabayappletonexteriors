@@ -87,33 +87,33 @@ jobs:
 
           echo "Clearing caches ..."
           php <<'PHP'
-<?php
-$roots = [
-    __DIR__ . '/html/wp-load.php',
-    __DIR__ . '/wp-load.php',
-];
+          <?php
+          $roots = [
+              __DIR__ . '/html/wp-load.php',
+              __DIR__ . '/wp-load.php',
+          ];
 
-$load = null;
-foreach ($roots as $candidate) {
-    if (file_exists($candidate)) {
-        $load = $candidate;
-        break;
-    }
-}
+          $load = null;
+          foreach ($roots as $candidate) {
+              if (file_exists($candidate)) {
+                  $load = $candidate;
+                  break;
+              }
+          }
 
-if (!$load) {
-    fwrite(STDERR, "wp-load.php not found in expected locations.\n");
-    exit(1);
-}
+          if (!$load) {
+              fwrite(STDERR, "wp-load.php not found in expected locations.\n");
+              exit(1);
+          }
 
-require $load;
+          require $load;
 
-if (function_exists('wp_cache_flush')) {
-    wp_cache_flush();
-}
+          if (function_exists('wp_cache_flush')) {
+              wp_cache_flush();
+          }
 
-if (function_exists('flush_rewrite_rules')) {
-    flush_rewrite_rules(true);
-}
-PHP
+          if (function_exists('flush_rewrite_rules')) {
+              flush_rewrite_rules(true);
+          }
+          PHP
           EOF
