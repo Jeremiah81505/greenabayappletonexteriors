@@ -59,7 +59,7 @@ jobs:
               echo 'Remote repository already has full history.'
             fi
             git config receive.shallowUpdate true || true
-EOSSH
+          EOSSH
 
       - name: Validate SSH connectivity
         run: |
