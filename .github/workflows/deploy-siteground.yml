@@ -48,22 +48,18 @@ jobs:
         run: |
           set -euo pipefail
           REMOTE_PATH="${SITEGROUND_REPO_PATH%/}"
-          if ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" "REMOTE_PATH=\"$REMOTE_PATH\" bash -s" <<'EOSSH'
-          set -e
-          cd "$REMOTE_PATH"
-          if [ -f .git/shallow ]; then
-            echo 'Remote repository is shallow; fetching full history...'
-            git fetch --unshallow || git fetch --unshallow origin || true
-          else
-            echo 'Remote repository already has full history.'
-          fi
-          git config receive.shallowUpdate true || true
+          ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" \
+            REMOTE_PATH="$REMOTE_PATH" bash <<'EOSSH'
+set -e
+cd "$REMOTE_PATH"
+if [ -f .git/shallow ]; then
+  echo 'Remote repository is shallow; fetching full history...'
+  git fetch --unshallow || git fetch --unshallow origin || true
+else
+  echo 'Remote repository already has full history.'
+fi
+git config receive.shallowUpdate true || true
 EOSSH
-          then
-            echo "Remote repository prepared."
-          else
-            echo "::warning::Unable to prepare remote repository automatically (SSH access may be restricted). Continuing with deploy."
-          fi
 
       - name: Validate SSH connectivity
         run: |
