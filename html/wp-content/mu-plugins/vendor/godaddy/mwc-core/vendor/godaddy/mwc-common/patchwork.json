@@ -1,6 +1,0 @@
-{
-    "redefinable-internals": [
-        "exit",
-        "trigger_error"
-    ]
-}

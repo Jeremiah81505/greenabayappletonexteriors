@@ -30,6 +30,14 @@ wp-admin.zip
 gd-config.php
 gd-preload-cli.php
 
+# Local Backups and Archives
+Backup*/
+From SIte Ground/
+temp/
+Updated Plugin Zips/
+logs/
+html_old_*/
+
 # IDE and Editor Files
 .vscode/
 .idea/

@@ -1,6 +1,0 @@
-# Unit suite configuration.
-
-actor: UnitTester
-modules:
-  enabled:
-    - \Helper\Unit

@@ -1,6 +1,0 @@
-# Integration suite configuration.
-
-actor: IntegrationTester
-modules:
-  enabled:
-    - \Helper\Integration

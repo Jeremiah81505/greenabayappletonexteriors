@@ -1,6 +1,0 @@
-# Admin suite configuration.
-
-actor: AdminTester
-modules:
-  enabled:
-    - \Helper\Admin

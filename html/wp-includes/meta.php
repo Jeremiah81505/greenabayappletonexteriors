@@ -1207,8 +1207,6 @@ function update_meta_cache( $meta_type, $object_ids ) {
 		}
 	}
 
-	$cache = apply_filters('godaddy/update_meta_cache', $cache, $non_cached_ids, $meta_type);
-
 	$data = array();
 	foreach ( $non_cached_ids as $id ) {
 		if ( ! isset( $cache[ $id ] ) ) {

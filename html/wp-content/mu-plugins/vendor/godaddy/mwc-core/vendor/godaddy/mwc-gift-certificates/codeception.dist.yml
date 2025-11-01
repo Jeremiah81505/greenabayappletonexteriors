@@ -1,3 +1,0 @@
-extends: vendor/skyverge/lumiere/configs/codeception.yml
-params:
-    - .env.lumiere.dist

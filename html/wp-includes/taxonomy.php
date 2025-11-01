@@ -4109,7 +4109,6 @@ function _prime_term_caches( $term_ids, $update_meta_cache = true ) {
 	$non_cached_ids = _get_non_cached_ids( $term_ids, 'terms' );
 	if ( ! empty( $non_cached_ids ) ) {
 		$fresh_terms = $wpdb->get_results( sprintf( "SELECT t.*, tt.* FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE t.term_id IN (%s)", implode( ',', array_map( 'intval', $non_cached_ids ) ) ) );
-		$fresh_terms = apply_filters('godaddy/prime_term_caches/terms', $fresh_terms, $non_cached_ids);
 
 		update_term_cache( $fresh_terms );
 	}

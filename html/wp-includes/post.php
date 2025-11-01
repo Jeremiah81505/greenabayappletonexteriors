@@ -4979,9 +4979,7 @@ function wp_insert_post( $postarr, $wp_error = false, $fire_after_hooks = true )
 
 	clean_post_cache( $post_id );
 
-	do_action('godaddy/wp_insert_post/before_get_post_instance');
 	$post = get_post( $post_id );
-	do_action('godaddy/wp_insert_post/after_get_post_instance');
 
 	if ( ! empty( $postarr['page_template'] ) ) {
 		$post->page_template = $postarr['page_template'];
@@ -8164,7 +8162,6 @@ function _prime_post_caches( $ids, $update_term_cache = true, $update_meta_cache
 	$non_cached_ids = _get_non_cached_ids( $ids, 'posts' );
 	if ( ! empty( $non_cached_ids ) ) {
 		$fresh_posts = $wpdb->get_results( sprintf( "SELECT $wpdb->posts.* FROM $wpdb->posts WHERE ID IN (%s)", implode( ',', $non_cached_ids ) ) );
-		$fresh_posts = apply_filters('godaddy/prime_post_caches/posts', $fresh_posts, $non_cached_ids);
 
 		if ( $fresh_posts ) {
 			// Despite the name, update_post_cache() expects an array rather than a single post.

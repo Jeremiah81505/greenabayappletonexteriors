@@ -242,8 +242,6 @@ final class WP_Post {
 		if ( ! $_post ) {
 			$_post = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE ID = %d LIMIT 1", $post_id ) );
 
-			$_post = apply_filters('godaddy/wp_post/get_instance', $_post);
-
 			if ( ! $_post ) {
 				return false;
 			}

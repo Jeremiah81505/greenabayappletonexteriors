@@ -3433,8 +3433,6 @@ class WP_Query {
 
 		// Convert to WP_Post objects.
 		if ( $this->posts ) {
-			$this->posts = apply_filters('godaddy/wp_query/get_posts/before_get_post', $this->posts, $this);
-
 			/** @var WP_Post[] */
 			$this->posts = array_map( 'get_post', $this->posts );
 		}
