@@ -117,3 +117,12 @@ jobs:
           }
           PHP
           EOF
+
+      - name: Prune CI files on server
+        env:
+          SSH_HOST: ssh.greenbayappletonexteriorsolutions.com
+          SSH_PORT: "18765"
+          SSH_USER: u3100-pdmwtlq9gnso
+        run: |
+          ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+            "rm -rf /home/customer/www/greenbayappletonexteriorsolutions.com/public_html/.github"

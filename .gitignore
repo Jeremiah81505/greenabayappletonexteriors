@@ -13,6 +13,7 @@ wp-config.php
 # Temporary and Cache Files
 .DS_Store
 .htaccess
+!/html/.htaccess
 wp-content/cache/
 wp-content/backup-db/
 

@@ -1,0 +1,30 @@
+# Block VCS and sensitive files
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.github
+<FilesMatch "^(composer\.json|composer\.lock|package\.json|yarn\.lock|phpunit\.xml|\.env)$">
+	Require all denied
+</FilesMatch>
+
+# SGS XMLRPC Disable Service
+<Files xmlrpc.php>
+	order deny,allow
+	deny from all
+</Files>
+# SGS XMLRPC Disable Service END
+
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+ RewriteEngine On
+ RewriteBase /
+ RewriteRule ^index\.php$ - [L]
+ RewriteCond %{REQUEST_URI} !/(wp-content\/uploads/.*)$
+ RewriteCond %{REQUEST_FILENAME} !-f
+ RewriteCond %{REQUEST_FILENAME} !-d
+ RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# SGO Unset Vary
+  Header unset Vary
+# SGO Unset Vary END
