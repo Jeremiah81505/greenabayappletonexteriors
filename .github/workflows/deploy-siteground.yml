@@ -50,15 +50,15 @@ jobs:
           REMOTE_PATH="${SITEGROUND_REPO_PATH%/}"
           ssh -i ~/.ssh/siteground_key -o StrictHostKeyChecking=yes -p "$SITEGROUND_PORT" "$SITEGROUND_USER@$SITEGROUND_HOST" \
             REMOTE_PATH="$REMOTE_PATH" bash <<'EOSSH'
-set -e
-cd "$REMOTE_PATH"
-if [ -f .git/shallow ]; then
-  echo 'Remote repository is shallow; fetching full history...'
-  git fetch --unshallow || git fetch --unshallow origin || true
-else
-  echo 'Remote repository already has full history.'
-fi
-git config receive.shallowUpdate true || true
+            set -e
+            cd "$REMOTE_PATH"
+            if [ -f .git/shallow ]; then
+              echo 'Remote repository is shallow; fetching full history...'
+              git fetch --unshallow || git fetch --unshallow origin || true
+            else
+              echo 'Remote repository already has full history.'
+            fi
+            git config receive.shallowUpdate true || true
 EOSSH
 
       - name: Validate SSH connectivity
