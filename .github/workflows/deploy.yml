@@ -31,3 +31,50 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519' git push siteground main -v
+
+      - name: Sync database from SQL dump
+        env:
+          SSH_HOST: ssh.greenbayappletonexteriorsolutions.com
+          SSH_PORT: "18765"
+          SSH_USER: u3100-pdmwtlq9gnso
+          DB_NAME: greenabayappletonexteriors
+          DB_USER: wp_local
+          DB_PASSWORD: 'Westcoast12#'
+          DB_SQL_PATH: fkqc46017421287.sql
+        run: |
+          ssh -o StrictHostKeyChecking=yes -i ~/.ssh/id_ed25519 -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
+            DB_NAME="$DB_NAME" \
+            DB_USER="$DB_USER" \
+            DB_PASSWORD="$DB_PASSWORD" \
+            DB_SQL_PATH="$DB_SQL_PATH" \
+            'bash -s' <<'EOF'
+          set -euo pipefail
+
+          cd /home/customer/www/greenbayappletonexteriorsolutions.com/public_html
+
+          if [ ! -f "$DB_SQL_PATH" ]; then
+            echo "SQL dump $DB_SQL_PATH not found in $(pwd)" >&2
+            exit 1
+          fi
+
+          export MYSQL_PWD="$DB_PASSWORD"
+
+          echo "Dropping existing tables in $DB_NAME ..."
+          mysql -u "$DB_USER" -D "$DB_NAME" -Nse 'SHOW TABLES' | while read -r table; do
+            mysql -u "$DB_USER" -D "$DB_NAME" -e "DROP TABLE IF EXISTS \\`$table\\`"
+          done
+
+          echo "Importing SQL dump ..."
+          mysql -u "$DB_USER" "$DB_NAME" < "$DB_SQL_PATH"
+
+          echo "Updating siteurl/home options ..."
+          mysql -u "$DB_USER" "$DB_NAME" -e "UPDATE wp_q2x61kxgzj_options SET option_value='https://greenbayappletonexteriorsolutions.com' WHERE option_name IN ('siteurl','home');"
+
+          echo "Replacing localhost URLs ..."
+          mysql -u "$DB_USER" "$DB_NAME" -e "UPDATE wp_q2x61kxgzj_options SET option_value = REPLACE(option_value, 'http://localhost/exterior-solutions', 'https://greenbayappletonexteriorsolutions.com');"
+          mysql -u "$DB_USER" "$DB_NAME" -e "UPDATE wp_q2x61kxgzj_posts SET post_content = REPLACE(post_content, 'http://localhost/exterior-solutions', 'https://greenbayappletonexteriorsolutions.com');"
+          mysql -u "$DB_USER" "$DB_NAME" -e "UPDATE wp_q2x61kxgzj_postmeta SET meta_value = REPLACE(meta_value, 'http://localhost/exterior-solutions', 'https://greenbayappletonexteriorsolutions.com');"
+
+          echo "Clearing caches ..."
+          php -r "define('WP_USE_THEMES', false); require __DIR__ . '/html/wp-load.php'; if (function_exists('wp_cache_flush')) { wp_cache_flush(); } if (function_exists('flush_rewrite_rules')) { flush_rewrite_rules(true); }"
+          EOF

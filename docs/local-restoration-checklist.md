@@ -44,6 +44,7 @@ This checklist summarizes the steps needed to finish wiring the restored WordPre
 6. **Deployment Prep**
    - Commit the new assets (uploads, plugins, scripts) to Git.
    - Update production credentials in `wp-config.php` before pushing to SiteGround, or keep them in host-specific includes.
-   - When ready, run your SiteGround deployment workflow or upload via SFTP.
+   - Pushing to `main` automatically triggers the GitHub deploy workflow, which now re-imports `fkqc46017421287.sql` on the SiteGround server. Avoid editing content directly in production unless you plan to capture the changes in the repository or the SQL dump first.
+   - If you need to re-seed the database without deploying code, run the manual **Restore production database** workflow from the Actions tab.
 
 Keep this file updated as you discover additional tasks during QA.

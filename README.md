@@ -76,6 +76,8 @@ Manual QA:
 - Package the active `html/` directory (omit `html_old_*` backups) when pushing to the destination host.
 - Remove transient artifacts (`php_errorlog`, `.maintenance`, cache folders) before final sync.
 - Keep premium plugin ZIPs in `Updated Plugin Zips/` for quick reinstalls but exclude them from production deployments.
+- Every push to `main` now runs the **Deploy to SiteGround** workflow, which syncs the git tree and re-imports `fkqc46017421287.sql` into the production database. Any manual content edits made directly in WordPress will be overwritten on the next push—capture them in the repo or the SQL dump first.
+- A manual **Restore production database** workflow is also available under the GitHub Actions tab if you ever need to re-import without publishing new code.
 
 ## Maintenance Checklist
 
